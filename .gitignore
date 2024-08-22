@@ -1,0 +1,6 @@
+# Python
+.venv/
+
+# Local files used in development for testing
+literature.json
+questions.json
