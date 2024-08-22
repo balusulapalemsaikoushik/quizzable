@@ -1,0 +1,3 @@
+# quizzical
+
+education with python
