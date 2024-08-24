@@ -1,6 +1,5 @@
 from copy import deepcopy
 import random
-# import json
 
 def _get_term_and_def(terms, term, answer_with="def"):
     reverse = False
@@ -38,17 +37,18 @@ def _get_random_terms(terms, n_terms=1):
 
 def _get_frq_question(terms, **kwargs):
     term = _get_random_terms(terms)
-    return {"_type": "frq", "term": term[0], "answer": term[0]}, term
+    return {"_type": "frq", "term": term[0], "answer": terms[term[0]]}, term
 
 def _get_mcq_question(terms, n_options=4, **kwargs):
     term = _get_random_terms(terms)
-    options = [(terms[term[0]], True)]
+    answer = terms[term[0]]
+    options = [answer]
     possible_options = list(terms.keys())
     for k in range(n_options - 1):
         option_term = random.choice(possible_options)
-        options.append([terms[option_term], False])
+        options.append(terms[option_term])
     random.shuffle(options)
-    return {"_type": "mcq", "term": term[0], "options": dict(options)}, term
+    return {"_type": "mcq", "term": term[0], "options": options, "answer": answer}, term
 
 def _get_true_false_question(terms, **kwargs):
     term = _get_random_terms(terms)
@@ -107,12 +107,5 @@ def get_random(
         n_terms=n_terms
     )
 
-if __name__ == "__main__":
-    # with open("literature.json") as terms_file:
-    #     terms = json.loads(terms_file.read())
-    
-    # questions = get_random(terms, types=["mcq", "frq", "match", "tf"], answer_with="def")
-    # with open("questions.json", "w") as questions_file:
-    #     questions_file.write(json.dumps(questions))
-
-    pass
+def check_answer(question, answer):
+    return question["answer"] == answer, question["answer"]

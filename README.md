@@ -16,7 +16,7 @@ Every function below takes a dictionary argument `terms` and optional values for
 {
     "painter": "la pintura",
     "brush": "el pincel",
-    "sculptor": "la escultura",
+    "sculpture": "la escultura",
     "palette:": "la paleta",
     "self-portrait": "el autorretrato",
     "abstract": "abstracto/a"
@@ -72,7 +72,8 @@ Returns a list in the following format:
             "option2": False,
             "option3": True,
             "option4": False,
-        }
+        },
+        "answer": "answer"
     },
     # more questions...
 ]
@@ -80,7 +81,8 @@ Returns a list in the following format:
 
 Here's a brief overview:
 * `term` is what the user will be prompted with, whether that be to choose a term's definition or vice/versa.
-* `options` is a dictionary mapping the potential answer choices to whether they are the correct answer (i.e. `True` means correct, `False` means incorrect).
+* `options` is the list of potential answer choices.
+* `answer` is correct choice out of `options`.
 
 ### `get_true_false`
 Parameters:
@@ -182,6 +184,13 @@ Example 3 question quiz returned by this function:
 ```
 
 Please see [`get_frq`](#get_frq), [`get_mcq`](#get_mcq), [`get_true_false`](#get_true_false), and [`get_match`](#get_match) for more information on the format of the above questions.
+
+### `check_answer`
+Parameters:
+* `question`: question to which the answer was given
+* `answer`: answer provided by the user
+
+Returns a tuple: the first item is a boolean whose value is `True` if `answer` matches the question's `"answer"` key or `False` otherwise, and the second item is the value for the question's `"answer"` key.
 
 ## Contributors
 ### Sai Koushik Balusulapalem

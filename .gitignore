@@ -1,6 +1,8 @@
 # Python
 .venv/
+__pycache__/
 
 # Local files used in development for testing
 literature.json
 questions.json
+test.py
