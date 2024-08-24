@@ -2,18 +2,21 @@ from copy import deepcopy
 import random
 # import json
 
-def get_terms(terms, answer_with="def"):
+def _get_term_and_def(terms, term, answer_with="def"):
     reverse = False
     if answer_with == "both":
         reverse = random.random() < 0.5
     elif answer_with == "term":
         reverse = True
     if reverse:
-        terms_copy = {}
-        for term in terms:
-            terms_copy[terms[term]] = term
-    else:
-        terms_copy = deepcopy(terms)
+        return terms[term], term
+    return term, terms[term]
+
+def get_terms(terms, answer_with="def"):
+    terms_copy = deepcopy(terms)
+    for term in terms:
+        new_term, new_def = _get_term_and_def(terms, term, answer_with)
+        terms_copy[new_term] = new_def
     return terms_copy
 
 def _get_quiz(func, terms, length=10, answer_with="def", **kwargs):
@@ -22,7 +25,8 @@ def _get_quiz(func, terms, length=10, answer_with="def", **kwargs):
     for i in range(length):
         possible_terms = list(terms_copy.keys())
         term = random.choice(possible_terms)
-        quiz[term] = func(terms, term, **kwargs)
+        quiz[term] = func(terms_copy, term, **kwargs)
+        del terms_copy[term]
     return quiz
 
 def _get_frq_question(terms, term, **kwargs):
