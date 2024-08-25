@@ -1,6 +1,63 @@
 from copy import deepcopy
 import random
 
+class Quiz:
+    def __init__(self, data):
+        self.questions = data
+    
+    def to_list(self):
+        return [q.to_dict() for q in self.questions]
+
+class Question:
+    def __init__(self, data):
+        self._data = data
+        self.term = data["term"]
+        self.answer = data["answer"]
+    
+    def check_answer(self, answer):
+        return self.answer == answer, self.answer
+    
+    def to_dict(self):
+        return self._data
+
+class MCQQuestion(Question):
+    def __init__(self, term, options, answer):
+        super().__init__({
+            "_type": "mcq",
+            "term": term,
+            "options": options,
+            "answer": answer
+        })
+        self.options = options
+
+class FRQQuestion(Question):
+    def __init__(self, term, answer):
+        super().__init__({
+            "_type": "frq",
+            "term": term,
+            "answer": answer
+        })
+
+class TrueFalseQuestion(Question):
+    def __init__(self, term, definition, answer):
+        super().__init__({
+            "_type": "tf",
+            "term": term,
+            "def": definition,
+            "answer": answer
+        })
+        self.definition = definition
+
+class MatchQuestion(Question):
+    def __init__(self, term, definitions, answer):
+        super().__init__({
+            "_type": "match",
+            "term": term,
+            "def": definitions,
+            "answer": answer
+        })
+        self.definitions = definitions
+
 def _get_term_and_def(terms, term, answer_with="def"):
     reverse = False
     if answer_with == "both":
@@ -18,94 +75,68 @@ def get_terms(terms, answer_with="def"):
         terms_copy[new_term] = new_def
     return terms_copy
 
-def _get_quiz(func, terms, length=10, answer_with="def", **kwargs):
-    quiz = []
-    terms_copy = get_terms(terms, answer_with)
-    for i in range(length):
-        question, term = func(terms_copy, **kwargs)
-        quiz.append(question)
-        for t in term:
-            del terms_copy[t]
-    return quiz
-
 def _get_random_terms(terms, n_terms=1):
-    possible_terms = list(terms.keys())
+    terms_copy = deepcopy(terms)
     random_terms = []
     for i in range(n_terms):
-        random_terms.append(random.choice(possible_terms))
+        possible_terms = list(terms_copy.keys())
+        random_term = random.choice(possible_terms)
+        random_terms.append(random_term)
+        del terms_copy[random_term]
     return random_terms
 
-def _get_frq_question(terms, **kwargs):
+def get_frq_question(terms, **kwargs):
     term = _get_random_terms(terms)
-    return {"_type": "frq", "term": term[0], "answer": terms[term[0]]}, term
+    return FRQQuestion(term=[term], answer=terms[term[0]])
 
-def _get_mcq_question(terms, n_options=4, **kwargs):
-    term = _get_random_terms(terms)
-    answer = terms[term[0]]
-    options = [answer]
-    possible_options = list(terms.keys())
-    for k in range(n_options - 1):
-        option_term = random.choice(possible_options)
-        options.append(terms[option_term])
-    random.shuffle(options)
-    return {"_type": "mcq", "term": term[0], "options": options, "answer": answer}, term
+def get_mcq_question(terms, n_options=4, **kwargs):
+    options = _get_random_terms(terms, n_options)
+    term = random.choice(options)
+    return MCQQuestion(term=[term], options=options, answer=terms[term])
 
-def _get_true_false_question(terms, **kwargs):
-    term = _get_random_terms(terms)
+def get_true_false_question(terms, **kwargs):
+    term = _get_random_terms(terms, 2)
     definition, answer = terms[term[0]], True
-    possible_decoys = list(terms.keys())
     if (random.random() < 0.5):
-        definition = terms[random.choice(possible_decoys)]
-        answer = False
-    return {"_type": "tf", "term": term[0], "def": definition, "answer": answer}, term
+        definition, answer = terms[term[1]], False
+    return TrueFalseQuestion(term=[term], definition=definition, answer=answer)
 
-def _get_match_question(terms, **kwargs):
+def get_match_question(terms, **kwargs):
     term = _get_random_terms(terms, n_terms=5)
     definitions = []
     for t in term:
         definitions.append(terms[t])
     answer = dict(zip(term, definitions))
     random.shuffle(definitions)
-    return {"_type": "match", "term": term, "def": definitions, "answer": answer}, term
+    return MatchQuestion(term=term, definitions=definitions, answer=answer)
 
-def _get_random_question(terms, types=["mcq", "frq", "tf"], n_options=4, n_terms=5):
+def get_random_question(terms, types=["mcq", "frq", "tf"], n_options=4, n_terms=5):
     quiz_types = {
-        "mcq": _get_mcq_question,
-        "frq": _get_frq_question,
-        "tf": _get_true_false_question,
-        "match": _get_match_question,
+        "mcq": get_mcq_question,
+        "frq": get_frq_question,
+        "tf": get_true_false_question,
+        "match": get_match_question,
     }
     get_question = quiz_types[random.choice(types)]
     return get_question(terms, n_options=n_options, n_terms=n_terms)
 
-def get_frq(terms, length=10, answer_with="def"):
-    return _get_quiz(_get_frq_question, terms, length, answer_with)
-
-def get_mcq(terms, length=10, answer_with="def", n_options=4):
-    return _get_quiz(_get_mcq_question, terms, length, answer_with, n_options=n_options)
-
-def get_true_false(terms, length=10, answer_with="def"):
-    return _get_quiz(_get_true_false_question, terms, length, answer_with)
-
-def get_match(terms, length=10, answer_with="def", n_terms=5):
-    return _get_quiz(_get_match_question, terms, length, answer_with, n_terms=n_terms)
-
-def get_random(
+def get_quiz(
         terms,
         types=["mcq", "frq", "tf"],
         length=10,
         answer_with="def",
         n_options=4,
         n_terms=5):
-    return _get_quiz(
-        _get_random_question,
-        terms,
-        length,
-        answer_with,
-        types=types,
-        n_options=n_options,
-        n_terms=n_terms
-    )
-
-def check_answer(question, answer):
-    return question["answer"] == answer, question["answer"]
+    quiz = []
+    terms_copy = get_terms(terms, answer_with)
+    for i in range(length):
+        question = get_random_question(
+            terms_copy,
+            types=types,
+            n_options=n_options,
+            n_terms=n_terms
+        )
+        quiz.append(question)
+        for t in question.term:
+            del terms_copy[t]
+    return Quiz(quiz)
