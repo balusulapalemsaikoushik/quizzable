@@ -9,9 +9,16 @@
         * [`Question.check_answer(...)`](#questioncheck_answer)
         * [`Question.to_dict()`](#questionto_dict)
     * [`MCQQuestion`](#mcqquestion)
+        * [`MCQQuestion.options`](#mcqquestionoptions)
+        * [`MCQQuestion.to_dict()`](#mcqquestionto_dict)
     * [`FRQQuestion`](#frqquestion)
+        * [`FRQQuestion.to_dict()`](#frqquestionto_dict)
     * [`TrueFalseQuestion`](#truefalsequestion)
+        * [`TrueFalseQuestion.def`](#truefalsequestiondef)
+        * [`TrueFalseQuestion.to_dict()`](#truefalsequestionto_dict)
     * [`MatchQuestion`](#matchquestion)
+        * [`MatchQuestion.def`](#matchquestiondef)
+        * [`MatchQuestion.to_dict()`](#matchquestionto_dict)
 * [Functions](#classes)
     * [`get_terms`](#get_terms)
     * [`get_frq_question`](#get_frq_question)
@@ -24,8 +31,9 @@
 ## Classes
 
 ### `Quiz`
-Quiz object with the following attributes:
-* `questions`: list of questions within the quiz, represented by a list of arbitrary `Question` objects.
+Arbitrary quiz object.
+#### `Quiz.questions`
+list of questions within the quiz, represented by a list of arbitrary `Question` objects.
 
 #### `Quiz.to_list()`
 Returns a listlike representation of the quiz, with each `Question` object being represented as its dictionary representation. For example, it could look like this:
@@ -61,9 +69,11 @@ Please see documentation for [`MCQQuestion`](#mcqquestion), [`FRQQuestion`](#frq
 Generic question object used for reconstruction of a question from JSON data, with the following input parameters:
 * `data`: dictionary used to reconstruct the `Question` object
 
-And these attributes:
-* `term`: question that the user is prompted with
-* `answer`: correct answer to the prompt `term`.
+#### `Question.term`
+Question that the user is prompted with.
+
+#### `Question.answer`
+Correct answer to the prompt `term`.
 
 #### `Question.check_answer(...)`
 Parameters:
@@ -72,12 +82,15 @@ Parameters:
 Returns a tuple: the first item is a boolean whose value is `True` if `answer` matches the question's `answer` attribute or `False` otherwise, and the second item is the value for the question's `answer` attribute.
 
 #### `Question.to_dict()`
-Returns a dictionary representation of the question. Each question has a `_type` key that can be used to determine how to render a question on the frontend (i.e. display multiple options for MCQ, textbox for FRQ, etc.), and a `term` key which represents the term the user is prompted with. Please see documentation for [`MCQQuestion`](#mcqquestion), [`FRQQuestion`](#frqquestion), [`TrueFalseQuestion`](#truefalsequestion), and [`MatchQuestion`](#matchquestion) for more information.
+Returns a dictionary representation of the question. Each question has a `_type` key that can be used to determine how to render a question on the frontend (i.e. display multiple options for MCQ, textbox for FRQ, etc.), and a `term` key which represents the term the user is prompted with. Please see [`MCQQuestion.to_dict()`](#mcqquestionto_dict), [`FRQQuestion.to_dict()`](#frqquestionto_dict), [`TrueFalseQuestion.to_dict()`](#truefalsequestionto_dict), and [`MatchQuestion.to_dict()`](#matchquestionto_dict) for more information.
 
 ### `MCQQuestion`
 Representation of an MCQ-format question. Has the same attributes as [`Question`](#question) objects, with the following additional properties:
-* `options`: list of potential answer choices.
 
+#### `MCQQuestion.options`
+List of potential answer choices.
+
+#### `MCQQuestion.to_dict()`
 The dictionary representation returned by the `to_dict` method of a `MCQQuestion` object looks like this:
 ```py
 {
@@ -101,6 +114,7 @@ Here's a brief overview:
 ### `FRQQuestion`
 Representation of an FRQ-format question. Has the same attributes as [`Question`](#question) objects, with the no additional properties.
 
+#### `FRQQuestion.to_dict()`
 The dictionary representation returned by the `to_dict` method of a `FRQQuestion` object looks like this:
 ```py
 {
@@ -116,8 +130,12 @@ Here's a brief overview:
 
 ### `TrueFalseQuestion`
 Representation of an True-or-false format question. Has the same attributes as [`Question`](#question) objects, with the following additional properties:
-* `definition`: what the user has to determine is True or False.
 
+
+#### `TrueFalseQuestion.definition`
+What the user has to determine is True or False.
+
+#### `TrueFalseQuestion.to_dict()`
 The dictionary representation returned by the `to_dict` method of a `TrueFalseQuestion` object looks like this:
 ```py
 {
@@ -135,9 +153,11 @@ Here's a brief overview:
 
 ### `MatchQuestion`
 Representation of an MCQ-format question. Has the same attributes as [`Question`](#question) objects, with the following additional properties:
-* `options`: list of potential answer choices.
-* `def` what the user has to match with the corresponding terms.
 
+#### `MatchQuestion.def`
+What the user has to match with the corresponding terms.
+
+#### `MatchQuestion.to_dict()`
 The dictionary representation returned by the `to_dict` method of a `MatchQuestion` object looks like this:
 ```py
 {
