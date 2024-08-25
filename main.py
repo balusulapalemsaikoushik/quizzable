@@ -87,19 +87,20 @@ def _get_random_terms(terms, n_terms=1):
 
 def get_frq_question(terms, **kwargs):
     term = _get_random_terms(terms)
-    return FRQQuestion(term=[term], answer=terms[term[0]])
+    return FRQQuestion(term=term, answer=terms[term[0]])
 
 def get_mcq_question(terms, n_options=4, **kwargs):
     options = _get_random_terms(terms, n_options)
     term = random.choice(options)
-    return MCQQuestion(term=[term], options=options, answer=terms[term])
+    answer_choices = [terms[option] for option in options]
+    return MCQQuestion(term=[term], options=answer_choices, answer=terms[term])
 
 def get_true_false_question(terms, **kwargs):
     term = _get_random_terms(terms, 2)
     definition, answer = terms[term[0]], True
     if (random.random() < 0.5):
         definition, answer = terms[term[1]], False
-    return TrueFalseQuestion(term=[term], definition=definition, answer=answer)
+    return TrueFalseQuestion(term=term, definition=definition, answer=answer)
 
 def get_match_question(terms, **kwargs):
     term = _get_random_terms(terms, n_terms=5)
