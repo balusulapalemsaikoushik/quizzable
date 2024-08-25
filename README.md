@@ -1,5 +1,5 @@
-# quizzical
-`quizzical` provides an easy-to-implement interface to build a framework for educational quiz apps built on top of Python. The `quizzical` library contains functions for the generation of quizzes consisting of MCQ, FRQ, True-or-false, or Matching questions, allowing you to build educational apps that leverage the power of Python with great ease. Learn more in the documentation below.
+# quizzable
+`quizzable` provides an easy-to-implement interface to build a framework for educational quiz apps built on top of Python. The `quizzable` library contains functions for the generation of quizzes consisting of MCQ, FRQ, True-or-false, or Matching questions, allowing you to build educational apps that leverage the power of Python with great ease. Learn more in the documentation below.
 
 ## Table of Contents
 * [Classes](#classes)
@@ -25,6 +25,7 @@
     * [`get_mcq_question`](#get_match_question)
     * [`get_true_false_question`](#get_true_false_question)
     * [`get_match_question`](#get_match_question)
+    * [`get_random_question`](#get_random_question)
     * [`get_quiz`](#get_quiz)
 * [Contributors](#contributors)
 
@@ -239,6 +240,14 @@ Returns a [`TrueFalseQuestion`](#truefalsequestion) object with a random True-or
 * `n_terms = 5`: how many terms have to be matched
 
 Returns a [`MatchQuestion`](#matchquestion) object with a random matching-format question generated from `terms`.
+
+### `get_random_question`
+Parameters:
+* `types = ["mcq", "frq", "tf"]`: list that can contain `"mcq"`, `"frq"`, `"tf"`, or `"match"`; types of questions that appear on the quiz
+* `n_options = 4`: (if MCQs are involved) number of options per MCQ question
+* `n_terms = 5`: (if matching questions are involved) number of terms to match per matching question
+
+Returns a `Question` object of a random-format question generated from `terms`.
 
 ### `get_quiz`
 Parameters:
