@@ -23,6 +23,7 @@ Python with great ease.
 
 import random
 from copy import deepcopy
+from typing import Union
 
 from . import exceptions
 
@@ -37,7 +38,7 @@ class Question:
     * `**kwargs`: other question data (e.g. `options`, `definition`, etc.)
     """
 
-    def __init__(self, _type: str, term: str, answer: str | bool, **kwargs):
+    def __init__(self, _type: str, term: str, answer: Union[str, bool], **kwargs):
         self._type = _type
         self.term = term
         self.answer = answer
@@ -59,7 +60,7 @@ class Question:
         except KeyError as e:
             raise exceptions.DataIncompleteError(e.args[0])
 
-    def check_answer(self, answer: str | bool):
+    def check_answer(self, answer: Union[str, bool]):
         """Check if `answer` matches the question's answer."""
         return self.answer == answer, self.answer
 
@@ -401,15 +402,15 @@ class Terms:
         if (not length) or (length > len(self)):
             raise exceptions.InvalidLengthError(length)
 
-        quiz = []
+        questions = []
         terms_copy = self.get_terms(answer_with)
         for i in range(length):
             question = terms_copy.get_random_question(
                 types, n_options=n_options, n_terms=n_terms
             )
-            quiz.append(question)
+            questions.append(question)
             for t in question.term:
                 del terms_copy[t]
             if (len(terms_copy) < n_terms) or (len(terms_copy) < n_options):
                 terms_copy = self.get_terms(answer_with)
-        return Quiz(quiz)
+        return Quiz(questions)

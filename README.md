@@ -2,29 +2,10 @@
 [![Test](https://github.com/balusulapalemsaikoushik/quizzable/actions/workflows/test.yml/badge.svg)](https://github.com/balusulapalemsaikoushik/quizzable/actions/workflows/test.yml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-`quizzable` provides an easy-to-implement interface to build a framework for educational quiz apps built on top of Python. The `quizzable` library allows you to create quizzes consisting of MCQ, FRQ, True-or-false, or Matching questions, allowing you to build educational apps that leverage the power of Python with great ease.
-
-```py
-from quizzable import Terms
-
-terms = Terms({
-    "la tienda de acampar": "tent",
-    "la linterna": "flashlight",
-    "la roca": "rock",
-    # more terms...
-})
-
-mcq = terms.get_mcq_question()
-print(mcq.term)
-for option in mcq.options:
-    print(option)
-answer = input()
-print(mcq.check_answer(answer))
-```
-
-The full documentation is described below.
+`quizzable` provides an easy-to-implement interface to build a framework for educational quiz apps built on top of Python. The `quizzable` library allows you to create quizzes consisting of MCQ, FRQ, True-or-false, or Matching questions, allowing you to build educational apps that leverage the power of Python with great ease. The full documentation is described below.
 
 ## Table of Contents
+* [Quickstart](#quickstart)
 * [Classes](#classes)
     * [`Terms`](#terms)
         * [`Terms.get_terms()`](#termsget_terms)
@@ -62,6 +43,73 @@ The full documentation is described below.
     * [`DataIncompleteError`](#dataincompleteerror)
 * [Authors](#authors)
 
+## Quickstart
+
+To get started, install the `quizzable` package through `pip` on a supported version of Python (`quizzable` currently supports Python 3.9+):
+```console
+$ python -m pip install quizzable
+```
+Next, import the `Terms` class from the `quizzable` module:
+```py
+from quizzable import Terms
+```
+Then, create a list of terms:
+```py
+data = {
+    "painter": "la pintura",
+    "brush": "el pincel",
+    "sculpture": "la escultura",
+    "palette:": "la paleta",
+    "self-portrait": "el autorretrato",
+    "abstract": "abstracto/a",
+    # more terms...
+}
+terms = Terms(data)
+```
+or create one from JSON data:
+```py
+import json
+
+with open("vocabulary.json") as terms_file:
+    terms = Terms(json.loads(terms_file.read()))
+```
+Aftewards, you can choose to generate random types of questions using the `get_random_question` method:
+```py
+question = terms.get_random_question()
+```
+generate an entire quiz of questions using the `get_quiz` method:
+```py
+quiz = terms.get_quiz(types=["mcq", "match", "tf"])
+```
+Or create different types of questions manually like so:
+```py
+frq = terms.get_frq_question()  # free-response
+mcq = terms.get_mcq_question()  # multiple-choice
+tf = terms.get_true_false_question()  # true-or-false
+matching = terms.get_frq_question()  # matching
+```
+A question has different properties, depending on its type:
+```py
+print(f"What is the translation of {mcq.term}?")
+for option in mcq.options:
+    print(option)
+print()
+answer = input("Answer: ")
+```
+To score a question, simply use its `check_answer` method:
+```py
+correct, actual = mcq.check_answer(answer)
+if correct:
+    print("Correct!")
+else:
+    print(f"Incorrect...the answer was {actual}")
+```
+If you'd like, you can convert a question or quiz to back to its raw data at any time:
+```py
+print(question.to_dict())
+print(quiz.to_data())
+```
+
 ## Classes
 
 ### `Terms`
@@ -80,31 +128,31 @@ Should be a dictionary mapping _terms_ to _definitions_, where in this case a _t
 }
 ```
 
-### `Terms.get_terms`
+#### `Terms.get_terms()`
 Parameters:
 * `answer_with = "def"`: can be `"term"`, `"def"`, or `"both"`; how the question should be answered (see [Functions](#functions))
 
 Returns the dictionary `terms` modified based on the value for `answer_with`. May be useful for making flashcards for which terms and definitions may need to be swapped on-demand.
 
-### `Terms.get_frq_question`
+#### `Terms.get_frq_question()`
 Returns an [`FRQQuestion`](#frqquestion) object with a random FRQ-format question generated from `terms`.
 
-### `Terms.get_mcq_question`
+#### `Terms.get_mcq_question()`
 Parameters:
 * `n_options = 4`: number of options per question.
 
 Returns an [`MCQQuestion`](#mcqquestion) object with a random MCQ-format question generated from `terms`.
 
-### `Terms.get_true_false_question`
+#### `Terms.get_true_false_question()`
 Returns a [`TrueFalseQuestion`](#truefalsequestion) object with a random True-or-false format question generated from `terms`.
 
-### `Terms.get_match_question`
+#### `Terms.get_match_question()`
 Parameters:
 * `n_terms = 5`: how many terms have to be matched
 
 Returns a [`MatchQuestion`](#matchquestion) object with a random matching-format question generated from `terms`.
 
-### `Terms.get_random_question`
+#### `Terms.get_random_question()`
 Parameters:
 * `types = ["mcq", "frq", "tf"]`: list that can contain `"mcq"`, `"frq"`, `"tf"`, or `"match"`; types of questions that appear on the quiz
 * `n_options = 4`: (if MCQs are involved) number of options per MCQ question
@@ -112,7 +160,7 @@ Parameters:
 
 Returns a `Question` object of a random-format question generated from `terms`.
 
-### `Terms.termsget_quiz`
+#### `Terms.get_quiz()`
 Returns a [`Quiz`](#quiz) object with random questions based on the below parameters.
 
 Parameters:
@@ -130,7 +178,7 @@ Arbitrary quiz object.
 #### `Quiz.questions`
 list of questions within the quiz, represented by a list of arbitrary `Question` objects.
 
-### `Quiz.from_data()`
+#### `Quiz.from_data()`
 Reconstructs a `Quiz` object from a listlike representation. See [`Quiz.to_data()`](#quizto_data) for more information on formatting.
 
 #### `Quiz.to_data()`

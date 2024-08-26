@@ -15,7 +15,7 @@ class TestQuiz:
 
     @pytest.fixture
     def data(self):
-        """Sample data representation of the `quiz` fixture."""
+        """Sample data representation of a basic 3-question quiz."""
 
         return [
             {
@@ -43,7 +43,7 @@ class TestQuiz:
 
     @pytest.fixture
     def quiz(self):
-        """Sample basic 3-question quiz."""
+        """Sample basic 3-question quiz based on fixture `data`."""
         return Quiz(
             [
                 FRQQuestion(
@@ -72,10 +72,7 @@ class TestQuiz:
 
         quiz = Quiz.from_data(data)
         for question, question_data in zip(quiz.questions, data):
-            original = Question.from_dict(question_data)
-            assert question._type == original._type
-            assert question.term == original.term
-            assert question.answer == original.answer
+            assert question.to_dict() == question_data
 
     def test_to_data(self, quiz, data):
         """Checks if `Quiz.to_data()` returns the quiz's list representation."""
@@ -103,8 +100,17 @@ class TestQuestion:
         }
 
     @pytest.fixture
+    def bad_data(self):
+        """Sample incomplete data for a quiz question."""
+
+        return {
+            "_type": "mcq",
+            "term": "A state divided into several regions with some degree of autonomy under one government.",
+        }
+    
+    @pytest.fixture
     def question(self):
-        """Sample MCQ-format question."""
+        """Sample MCQ-format question based on fixture `data`."""
         return MCQQuestion(
             "A state divided into several regions with some degree of autonomy under one government.",
             [
@@ -116,14 +122,6 @@ class TestQuestion:
             "Federal state",
         )
 
-    @pytest.fixture
-    def bad_data(self):
-        """Sample incomplete data for a quiz question."""
-
-        return {
-            "_type": "mcq",
-            "term": "A state divided into several regions with some degree of autonomy under one government.",
-        }
 
     def test_from_dict(self, data):
         """Tests if a dictionary can be used to reconstruct a `Question`."""
