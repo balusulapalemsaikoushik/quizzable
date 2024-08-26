@@ -1,4 +1,6 @@
 # quizzable
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+
 `quizzable` provides an easy-to-implement interface to build a framework for educational quiz apps built on top of Python. The `quizzable` library contains functions for the generation of quizzes consisting of MCQ, FRQ, True-or-false, or Matching questions, allowing you to build educational apps that leverage the power of Python with great ease. Learn more in the documentation below.
 
 ## Table of Contents
@@ -27,6 +29,13 @@
     * [`get_match_question`](#get_match_question)
     * [`get_random_question`](#get_random_question)
     * [`get_quiz`](#get_quiz)
+* [Exceptions](#exceptions)
+    * [`BaseQuizzableException`](#basequizzableexception)
+    * [`InvalidLengthError`](#basequizzableexception)
+    * [`InvalidOptionsError`](#basequizzableexception)
+    * [`InvalidTermsError`](#basequizzableexception)
+    * [`InvalidQuestionError`](#basequizzableexception)
+    * [`DataIncompleteError`](#basequizzableexception)
 * [Contributors](#contributors)
 
 ## Classes
@@ -259,6 +268,41 @@ Parameters:
 * `n_terms = 5`: (if matching questions are involved) number of terms to match per matching question
 
 Returns a [`Quiz`](#quiz) object with random questions based on the above parameters.
+
+## Exceptions
+
+### `BaseQuizzableException`
+The base exception for all `quizzable` errors.
+
+### `InvalidLengthError`
+The length specified is not valid (i.e. too short or too long)
+
+Parameters:
+* `length`: invalid length of the quiz
+
+### `InvalidOptionsError`
+The number of options (for MCQs) specified is not valid (i.e. too small or too large)
+
+Parameters:
+* `n_options`: invalid number of options per MCQ question
+
+### `InvalidTermsError`
+The number of terms (for matching questions) specified is not valid (i.e. too small or too large)
+
+Parameters:
+* `n_terms`: invalid number of terms per matching question
+
+### `InvalidQuestionError`
+The type of question specified is not valid (should only be `"mcq"`, `"frq"`, `"tf"`, or `"match"`).
+
+Parameters:
+* `question`: invalid type of question
+
+### `DataIncompleteError`
+The data passed into the constructor for `Question` is incomplete. See [`MCQQuestion.to_dict()`](#mcqquestionto_dict), [`FRQQuestion.to_dict()`](#frqquestionto_dict), [`TrueFalseQuestion.to_dict()`](#truefalsequestionto_dict), and [`MatchQuestion.to_dict()`](#matchquestionto_dict) for how the data for different types of questions should be formatted.
+
+Parameters:
+* `data`: incomplete data
 
 ## Contributors
 ### Sai Koushik Balusulapalem
