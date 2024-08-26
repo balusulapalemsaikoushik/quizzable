@@ -2,7 +2,7 @@
 `quizzable` provides an easy-to-implement interface to build a framework for
 educational quiz apps built on top of Python. The `quizzable` library contains
 functions for the generation of quizzes consisting of MCQ, FRQ, True-or-false,
-or Matching questions, allowing you to build educational apps that leverage the
+or matching questions, allowing you to build educational apps that leverage the
 power of Python with great ease.
 ## Classes
 * `Quiz`: quiz object
@@ -10,13 +10,13 @@ power of Python with great ease.
 * `MCQQuestion`: MCQ-format question object
 * `FRQQuestion`: FRQ-format question object
 * `TrueFalseQuestion`: True-or-false format question object
-* `MatchQuestion`: Matching format question object
+* `MatchQuestion`: matching format question object
 ## Functions
 * `get_terms`: get a modified list of terms
 * `get_frq_question`: get a random FRQ question based on some terms
 * `get_mcq_question`: get a random MCQ question based on some terms
 * `get_true_false_question`: get a random True-or-false question based on some terms
-* `get_match_question`: get a random Matching question based on some terms
+* `get_match_question`: get a random matching question based on some terms
 * `get_quiz`: get a randomly generated quiz consisting of different types of quiz questions from some terms
 """
 
@@ -160,7 +160,7 @@ class TrueFalseQuestion(Question):
 
 
 class MatchQuestion(Question):
-    """Representation of a Matching format question. The dictionary representation
+    """Representation of a matching format question. The dictionary representation
     returned by the `to_dict` method of a `MatchQuestion` object looks like this:
     ```py
     {
@@ -280,7 +280,7 @@ def get_true_false_question(terms, **kwargs):
 
 
 def get_match_question(terms, n_terms=5, **kwargs):
-    """Returns a `MatchQuestion` object with a Matching format question generated from `terms`.
+    """Returns a `MatchQuestion` object with a matching format question generated from `terms`.
 
     ## Parameters
     * `terms`: map of terms and definitions for quiz.

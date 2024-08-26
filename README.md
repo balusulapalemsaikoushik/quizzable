@@ -2,7 +2,7 @@
 [![Test](https://github.com/balusulapalemsaikoushik/quizzable/actions/workflows/test.yml/badge.svg)](https://github.com/balusulapalemsaikoushik/quizzable/actions/workflows/test.yml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-`quizzable` provides an easy-to-implement interface to build a framework for educational quiz apps built on top of Python. The `quizzable` library contains functions for the generation of quizzes consisting of MCQ, FRQ, True-or-false, or Matching questions, allowing you to build educational apps that leverage the power of Python with great ease. Learn more in the documentation below.
+`quizzable` provides an easy-to-implement interface to build a framework for educational quiz apps built on top of Python. The `quizzable` library contains functions for the generation of quizzes consisting of MCQ, FRQ, True-or-false, or Matching questions, allowing you to build educational apps that leverage the power of Python with great ease. The full documentation is described below.
 
 ## Table of Contents
 * [Classes](#classes)
@@ -25,18 +25,18 @@
 * [Functions](#classes)
     * [`get_terms`](#get_terms)
     * [`get_frq_question`](#get_frq_question)
-    * [`get_mcq_question`](#get_match_question)
+    * [`get_mcq_question`](#get_mcq_question)
     * [`get_true_false_question`](#get_true_false_question)
     * [`get_match_question`](#get_match_question)
     * [`get_random_question`](#get_random_question)
     * [`get_quiz`](#get_quiz)
 * [Exceptions](#exceptions)
     * [`BaseQuizzableException`](#basequizzableexception)
-    * [`InvalidLengthError`](#basequizzableexception)
-    * [`InvalidOptionsError`](#basequizzableexception)
-    * [`InvalidTermsError`](#basequizzableexception)
-    * [`InvalidQuestionError`](#basequizzableexception)
-    * [`DataIncompleteError`](#basequizzableexception)
+    * [`InvalidLengthError`](#invalidlengtherror)
+    * [`InvalidOptionsError`](#invalidoptionserror)
+    * [`InvalidTermsError`](#invalidtermserror)
+    * [`InvalidQuestionError`](#invalidquestionerror)
+    * [`DataIncompleteError`](#dataincompleteerror)
 * [Contributors](#contributors)
 
 ## Classes
