@@ -352,4 +352,6 @@ def get_quiz(
         quiz.append(question)
         for t in question.term:
             del terms_copy[t]
+        if (len(terms_copy) < n_terms) or (len(terms_copy) < n_options):
+            terms_copy = get_terms(terms, answer_with)
     return Quiz(quiz)
