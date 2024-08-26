@@ -1,70 +1,94 @@
 import pytest
 
-from ..quizzable import Question, Quiz, exceptions
+from ..quizzable import (
+    FRQQuestion,
+    MCQQuestion,
+    Question,
+    Quiz,
+    TrueFalseQuestion,
+    exceptions,
+)
 
 
 class TestQuiz:
-    """Test attributes and methods of the `Quiz` class."""
+    """Test functions/methods of the `Quiz` class."""
 
     @pytest.fixture
     def data(self):
-        """Sample data for a basic 4-question quiz."""
+        """Sample data representation of the `quiz` fixture."""
 
         return [
             {
                 "_type": "frq",
+                "term": "A type of language that forms due to extensive contact between different groups of people",
+                "answer": "Pidgin",
+            },
+            {
+                "_type": "mcq",
+                "term": "The blending of multiple aspects of culture to form a unique identity.",
+                "options": [
+                    "Syncretism",
+                    "Assimilation,",
+                    "Acculturation",
+                ],
+                "answer": "Syncretism",
+            },
+            {
+                "_type": "tf",
                 "term": "Anything that brings a people together.",
-                "answer": "Centripetal force",
-            },
-            {
-                "_type": "mcq",
-                "term": "The blending of multiple aspects of culture to form a unique identity.",
-                "options": [
-                    "Syncretism",
-                    "Assimilation,",
-                    "Acculturation",
-                ],
-                "answer": "Syncretism",
-            },
-            {
-                "_type": "mcq",
-                "term": "The blending of multiple aspects of culture to form a unique identity.",
-                "options": [
-                    "Syncretism",
-                    "Assimilation,",
-                    "Acculturation",
-                ],
-                "answer": "Syncretism",
+                "definition": "Centrifugal force",
+                "answer": False,
             },
         ]
 
-    def test_attributes(self, data):
-        """Tests the attributes for class `Quiz`."""
+    @pytest.fixture
+    def quiz(self):
+        """Sample basic 3-question quiz."""
+        return Quiz(
+            [
+                FRQQuestion(
+                    "A type of language that forms due to extensive contact between different groups of people",
+                    "Pidgin",
+                ),
+                MCQQuestion(
+                    "The blending of multiple aspects of culture to form a unique identity.",
+                    [
+                        "Syncretism",
+                        "Assimilation,",
+                        "Acculturation",
+                    ],
+                    "Syncretism",
+                ),
+                TrueFalseQuestion(
+                    "Anything that brings a people together.",
+                    "Centrifugal force",
+                    False,
+                ),
+            ]
+        )
 
-        questions = []
-        for question_data in data:
-            questions.append(Question(question_data))
+    def test_from_data(self, data):
+        """Tests if a list of data can be used to reconstruct a `Quiz` object."""
 
-        quiz = Quiz(questions)
-        assert quiz.questions == questions
+        quiz = Quiz.from_data(data)
+        for question, question_data in zip(quiz.questions, data):
+            original = Question.from_dict(question_data)
+            assert question._type == original._type
+            assert question.term == original.term
+            assert question.answer == original.answer
 
-    def test_to_list(self, data):
-        """Checks if `Question.to_list()` returns the question's dictionary representation."""
+    def test_to_data(self, quiz, data):
+        """Checks if `Quiz.to_data()` returns the quiz's list representation."""
 
-        questions = []
-        for question_data in data:
-            questions.append(Question(question_data))
-
-        quiz = Quiz(questions)
-        assert quiz.to_list() == data
+        assert quiz.to_data() == data
 
 
 class TestQuestion:
-    """Test attributes and methods of the `Question` class."""
+    """Test functions/methods of the `Question` class."""
 
     @pytest.fixture
     def data(self):
-        """Sample data for a basic MCQ-format question."""
+        """Sample data representation of the `question` fixture."""
 
         return {
             "_type": "mcq",
@@ -79,6 +103,20 @@ class TestQuestion:
         }
 
     @pytest.fixture
+    def question(self):
+        """Sample MCQ-format question."""
+        return MCQQuestion(
+            "A state divided into several regions with some degree of autonomy under one government.",
+            [
+                "Unitary state",
+                "Multi-state nation",
+                "Federal state",
+                "Nation state",
+            ],
+            "Federal state",
+        )
+
+    @pytest.fixture
     def bad_data(self):
         """Sample incomplete data for a quiz question."""
 
@@ -87,18 +125,18 @@ class TestQuestion:
             "term": "A state divided into several regions with some degree of autonomy under one government.",
         }
 
-    def test_attributes(self, data):
-        """Tests the attributes for class `Question`."""
+    def test_from_dict(self, data):
+        """Tests if a dictionary can be used to reconstruct a `Question`."""
 
-        question = Question(data)
+        question = Question.from_dict(data)
         assert question.term == data["term"]
         assert question.answer == data["answer"]
 
-    def test_attributes_incomplete(self, bad_data):
+    def test_from_dict_incomplete(self, bad_data):
         """Tests error handling in the case of incomplete data for class `Question`."""
 
         try:
-            question = Question(bad_data)
+            question = Question.from_dict(bad_data)
             assert not question
         except exceptions.DataIncompleteError:
             assert True
@@ -107,14 +145,12 @@ class TestQuestion:
         "answer, is_answer",
         [("Federal state", True), ("Nation state", False), ("Divided state", False)],
     )
-    def test_check_answer(self, answer, is_answer, data):
+    def test_check_answer(self, answer, is_answer, question, data):
         """Checks if `Question.check_answer()` returns the correct value."""
 
-        question = Question(data)
         assert question.check_answer(answer) == (is_answer, data["answer"])
 
-    def test_to_dict(self, data):
+    def test_to_dict(self, question, data):
         """Checks if `Question.to_dict()` returns the question's dictionary representation."""
 
-        question = Question(data)
         assert question.to_dict() == data

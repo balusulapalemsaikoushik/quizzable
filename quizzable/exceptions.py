@@ -1,3 +1,13 @@
+"""## Exceptions
+* `BaseQuizzableException`: base exception for `quizzable` errors
+* `InvalidLengthError`: quiz length is invalid
+* `InvalidOptionsError`: number of options (for MCQs) is invalid
+* `InvalidTermsError`: number of terms (for matching questions) is invalid
+* `InvalidQuestionError`: type of question (for random questions) is invalid
+* `DataIncompleteError`: data used to reconstruct a `Question` object is incomplete
+"""
+
+
 class BaseQuizzableException(Exception):
     """The base exception for all `quizzable` errors."""
 
