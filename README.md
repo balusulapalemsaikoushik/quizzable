@@ -1,6 +1,6 @@
 # quizzable
-![PyPI - Version](https://img.shields.io/pypi/v/quizzable)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/quizzable)
+[![PyPI - Version](https://img.shields.io/pypi/v/quizzable)](https://pypi.org/project/quizzable/)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/quizzable)](https://pypi.org/project/quizzable/)
 [![Test](https://github.com/balusulapalemsaikoushik/quizzable/actions/workflows/test.yml/badge.svg)](https://github.com/balusulapalemsaikoushik/quizzable/actions/workflows/test.yml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
