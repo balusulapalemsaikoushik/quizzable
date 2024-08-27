@@ -21,11 +21,11 @@ Python with great ease.
 * `DataIncompleteError`: data used to reconstruct a `Question` object is incomplete
 """
 
-import random
-from copy import deepcopy
-from typing import Union
+import random as _random
+from copy import deepcopy as _deepcopy
+from typing import Union as _Union
 
-from . import exceptions
+from . import exceptions as _exceptions
 
 
 class Question:
@@ -38,7 +38,7 @@ class Question:
     * `**kwargs`: other question data (e.g. `options`, `definition`, etc.)
     """
 
-    def __init__(self, _type: str, term: str, answer: Union[str, bool], **kwargs):
+    def __init__(self, _type: str, term: str, answer: _Union[str, bool], **kwargs):
         self._type = _type
         self.term = term
         self.answer = answer
@@ -51,16 +51,16 @@ class Question:
         ## Parameters
         * `data`: dictionary containing question data.
         """
-        data_copy = deepcopy(data)
+        data_copy = _deepcopy(data)
         try:
             _type = data_copy.pop("_type")
             term = data_copy.pop("term")
             answer = data_copy.pop("answer")
             return cls(_type, term, answer, **data_copy)
         except KeyError as e:
-            raise exceptions.DataIncompleteError(e.args[0])
+            raise _exceptions.DataIncompleteError(e.args[0])
 
-    def check_answer(self, answer: Union[str, bool]):
+    def check_answer(self, answer: _Union[str, bool]):
         """Check if `answer` matches the question's answer."""
         return self.answer == answer, self.answer
 
@@ -70,8 +70,13 @@ class Question:
 
 
 class MCQQuestion(Question):
-    """Representation of an MCQ-format question. The dictionary representation
-    returned by the `to_dict` method of a `MCQQuestion` object looks like this:
+    """Representation of an MCQ-format question.
+    ## Parameters
+    * `term`: question term (prompt)
+    * `options`: question options
+    * `answer`: question answer
+    The dictionary representation returned by the `to_dict` method of an
+    `MCQQuestion` object looks like this:
     ```py
     {
         "_type": "mcq",
@@ -97,8 +102,12 @@ class MCQQuestion(Question):
 
 
 class FRQQuestion(Question):
-    """Representation of an FRQ-format question. The dictionary representation
-    returned by the `to_dict` method of a `FRQQuestion` object looks like this:
+    """Representation of an FRQ-format question.
+    ## Parameters
+    * `term`: question term (prompt)
+    * `answer`: question answer
+    The dictionary representation returned by the `to_dict` method of an
+    `FRQQuestion` object looks like this:
     ```py
     {
         "_type": "frq",
@@ -116,8 +125,13 @@ class FRQQuestion(Question):
 
 
 class TrueFalseQuestion(Question):
-    """Representation of a True-or-false format question. The dictionary representation
-    returned by the `to_dict` method of a `TrueFalseQuestion` object looks like this:
+    """Representation of a True-or-false format question.
+    ## Parameters
+    * `term`: question term (prompt)
+    * `definition`: question definition (what the user has to determine is True or False)
+    * `answer`: question answer
+    The dictionary representation returned by the `to_dict` method of a
+    `TrueFalseQuestion` object looks like this:
     ```py
     {
         "_type": "tf",
@@ -139,8 +153,13 @@ class TrueFalseQuestion(Question):
 
 
 class MatchQuestion(Question):
-    """Representation of a matching format question. The dictionary representation
-    returned by the `to_dict` method of a `MatchQuestion` object looks like this:
+    """Representation of a matching format question.
+    ## Parameters
+    * `term`: question term (prompt)
+    * `definitions`: question definitions (what the user has to match with the terms)
+    * `answer`: question answer
+    The dictionary representation returned by the `to_dict` method of a
+    `MatchQuestion` object looks like this:
     ```py
     {
         "_type": "match",
@@ -232,7 +251,7 @@ def _get_term_and_def(terms, term, answer_with="def"):
     """(for internal package use) retrieve a term and definition based on `answer_with`."""
     reverse = False
     if answer_with == "both":
-        reverse = random.random() < 0.5
+        reverse = _random.random() < 0.5
     elif answer_with == "term":
         reverse = True
     if reverse:
@@ -242,12 +261,12 @@ def _get_term_and_def(terms, term, answer_with="def"):
 
 def _get_random_terms(terms, n_terms=1):
     """(for internal package use) retrieve `n_terms` terms from `terms`."""
-    terms_copy = deepcopy(terms)
+    terms_copy = _deepcopy(terms)
     random_terms = []
     for i in range(n_terms):
         possible_terms = list(terms_copy.keys())
         try:
-            random_term = random.choice(possible_terms)
+            random_term = _random.choice(possible_terms)
         except IndexError:
             return
         random_terms.append(random_term)
@@ -310,7 +329,7 @@ class Terms:
         ## Parameters
         * `answer_with = "def"`: can be `"term"`, `"def"`, or `"both"`; how the question should be answered.
         """
-        terms_copy = deepcopy(self._data)
+        terms_copy = _deepcopy(self._data)
         for term in self:
             new_term, new_def = _get_term_and_def(self._data, term, answer_with)
             terms_copy[new_term] = new_def
@@ -328,10 +347,10 @@ class Terms:
         * `n_options = 4`: number of options per question.
         """
         if (not n_options) or (n_options > len(self)):
-            raise exceptions.InvalidOptionsError(n_options)
+            raise _exceptions.InvalidOptionsError(n_options)
 
         options = _get_random_terms(self._data, n_options)
-        term = random.choice(options)
+        term = _random.choice(options)
         answer_choices = [self[option] for option in options]
         return MCQQuestion(term=[term], options=answer_choices, answer=self[term])
 
@@ -339,7 +358,7 @@ class Terms:
         """Returns a `TrueFalseQuestion` object with a random True-or-false format question generated from `terms`."""
         term = _get_random_terms(self._data, 2)
         definition, answer = self[term[0]], True
-        if random.random() < 0.5:
+        if _random.random() < 0.5:
             definition, answer = self[term[1]], False
         return TrueFalseQuestion(term=term, definition=definition, answer=answer)
 
@@ -350,14 +369,14 @@ class Terms:
         * `n_terms = 5`: how many terms have to be matched.
         """
         if (not n_terms) or (n_terms > len(self)):
-            raise exceptions.InvalidTermsError(n_terms)
+            raise _exceptions.InvalidTermsError(n_terms)
 
         term = _get_random_terms(self._data, n_terms)
         definitions = []
         for t in term:
             definitions.append(self[t])
         answer = dict(zip(term, definitions))
-        random.shuffle(definitions)
+        _random.shuffle(definitions)
         return MatchQuestion(term=term, definitions=definitions, answer=answer)
 
     def get_random_question(self, types=["mcq", "frq", "tf"], n_options=4, n_terms=5):
@@ -376,9 +395,9 @@ class Terms:
             "match": self.get_match_question,
         }
         try:
-            get_question = quiz_types[random.choice(types)]
+            get_question = quiz_types[_random.choice(types)]
         except KeyError as e:
-            raise exceptions.InvalidQuestionError(e.args[0])
+            raise _exceptions.InvalidQuestionError(e.args[0])
         return get_question(n_options=n_options, n_terms=n_terms)
 
     def get_quiz(
@@ -400,7 +419,7 @@ class Terms:
         * `n_terms = 5`: (if matching questions are involved) number of terms to match per matching question.
         """
         if (not length) or (length > len(self)):
-            raise exceptions.InvalidLengthError(length)
+            raise _exceptions.InvalidLengthError(length)
 
         questions = []
         terms_copy = self.get_terms(answer_with)

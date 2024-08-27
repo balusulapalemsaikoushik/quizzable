@@ -5,6 +5,10 @@ __pycache__/
 # pytest
 .pytest_cache/
 
+# build
+dist/
+*.egg-info/
+
 # Local files used in development for testing
 literature.json
 questions.json

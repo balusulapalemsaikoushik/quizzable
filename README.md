@@ -1,4 +1,6 @@
 # quizzable
+![PyPI - Version](https://img.shields.io/pypi/v/quizzable)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/quizzable)
 [![Test](https://github.com/balusulapalemsaikoushik/quizzable/actions/workflows/test.yml/badge.svg)](https://github.com/balusulapalemsaikoushik/quizzable/actions/workflows/test.yml)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
@@ -29,10 +31,10 @@
     * [`FRQQuestion`](#frqquestion)
         * [`FRQQuestion.to_dict()`](#frqquestionto_dict)
     * [`TrueFalseQuestion`](#truefalsequestion)
-        * [`TrueFalseQuestion.def`](#truefalsequestiondef)
+        * [`TrueFalseQuestion.definition`](#truefalsequestiondef)
         * [`TrueFalseQuestion.to_dict()`](#truefalsequestionto_dict)
     * [`MatchQuestion`](#matchquestion)
-        * [`MatchQuestion.def`](#matchquestiondef)
+        * [`MatchQuestion.definitions`](#matchquestiondef)
         * [`MatchQuestion.to_dict()`](#matchquestionto_dict)
 * [Exceptions](#exceptions)
     * [`BaseQuizzableException`](#basequizzableexception)
@@ -243,7 +245,12 @@ Parameters:
 Returns a dictionary representation of the question. Each question has a `_type` key that can be used to determine how to render a question on the frontend (i.e. display multiple options for MCQ, textbox for FRQ, etc.), and a `term` key which represents the term the user is prompted with. Please see [`MCQQuestion.to_dict()`](#mcqquestionto_dict), [`FRQQuestion.to_dict()`](#frqquestionto_dict), [`TrueFalseQuestion.to_dict()`](#truefalsequestionto_dict), and [`MatchQuestion.to_dict()`](#matchquestionto_dict) for more information on formatting.
 
 ### `MCQQuestion`
-Representation of an MCQ-format question. Has the same attributes as [`Question`](#question) objects, with the following additional properties:
+Representation of an MCQ-format question. Has the same attributes as [`Question`](#question) objects, with some additional properties.
+
+Parameters:
+* `term`: question term (prompt)
+* `options`: question options
+* `answer`: question answer
 
 #### `MCQQuestion.options`
 List of potential answer choices.
@@ -270,7 +277,11 @@ Here's a brief overview:
 * `answer` is correct choice out of `options`.
 
 ### `FRQQuestion`
-Representation of an FRQ-format question. Has the same attributes as [`Question`](#question) objects, with the no additional properties.
+Representation of an FRQ-format question. Has the same attributes as [`Question`](#question) objects, with some additional properties.
+
+Parameters:
+* `term`: question term (prompt)
+* `answer`: question answer
 
 #### `FRQQuestion.to_dict()`
 The dictionary representation returned by the `to_dict` method of a `FRQQuestion` object looks like this:
@@ -287,8 +298,12 @@ Here's a brief overview:
 * `answer` is the response that will be accepted as correct given the user's prompt.
 
 ### `TrueFalseQuestion`
-Representation of an True-or-false format question. Has the same attributes as [`Question`](#question) objects, with the following additional properties:
+Representation of an True-or-false format question. Has the same attributes as [`Question`](#question) objects, with the some additional properties.
 
+Parameters:
+* `term`: question term (prompt)
+* `definition`: question definition (what the user has to determine is True or False)
+* `answer`: question answer
 
 #### `TrueFalseQuestion.definition`
 What the user has to determine is True or False.
@@ -310,9 +325,14 @@ Here's a brief overview:
 * `answer` is the actual definition that matches with the given `prompt`, or term.
 
 ### `MatchQuestion`
-Representation of an MCQ-format question. Has the same attributes as [`Question`](#question) objects, with the following additional properties:
+Representation of an MCQ-format question. Has the same attributes as [`Question`](#question) objects, with the some additional properties.
 
-#### `MatchQuestion.def`
+Parameters:
+* `term`: question term (prompt)
+* `definitions`: question definitions (what the user has to match with the terms)
+* `answer`: question answer
+
+#### `MatchQuestion.definitions`
 What the user has to match with the corresponding terms.
 
 #### `MatchQuestion.to_dict()`

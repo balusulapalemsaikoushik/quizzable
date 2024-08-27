@@ -107,7 +107,7 @@ class TestQuestion:
             "_type": "mcq",
             "term": "A state divided into several regions with some degree of autonomy under one government.",
         }
-    
+
     @pytest.fixture
     def question(self):
         """Sample MCQ-format question based on fixture `data`."""
@@ -121,7 +121,6 @@ class TestQuestion:
             ],
             "Federal state",
         )
-
 
     def test_from_dict(self, data):
         """Tests if a dictionary can be used to reconstruct a `Question`."""
