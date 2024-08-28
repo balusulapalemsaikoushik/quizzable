@@ -24,7 +24,7 @@
     * [`Question`](#question)
         * [`Question.term`](#questionterm)
         * [`Question.answer`](#questionanswer)
-        * [`Question.term`](#questionprompt)
+        * [`Question.prompt`](#questionprompt)
         * [`Question.from_dict()`](#questionfrom_dict)
         * [`Question.check_answer()`](#questioncheck_answer)
         * [`Question.to_dict()`](#questionto_dict)
@@ -146,12 +146,12 @@ Returns the dictionary `terms` modified based on the value for `answer_with`. Ma
 Returns an [`FRQQuestion`](#frqquestion) object with a random FRQ-format question generated from `terms`.
 
 Parameters:
-* `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
+* `prompt = "{term}"`: question prompt (use `"{term}"` to reference question term in custom prompts)
 
 #### `Terms.get_mcq_question()`
 Parameters:
 * `n_options = 4`: number of options per question.
-* `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
+* `prompt = "{term}"`: question prompt (use `"{term}"` to reference question term in custom prompts)
 
 Returns an [`MCQQuestion`](#mcqquestion) object with a random MCQ-format question generated from `terms`.
 
@@ -159,12 +159,12 @@ Returns an [`MCQQuestion`](#mcqquestion) object with a random MCQ-format questio
 Returns a [`TrueFalseQuestion`](#truefalsequestion) object with a random True-or-false format question generated from `terms`.
 
 Parameters:
-* `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
+* `prompt = "{term}"`: question prompt (use `"{term}"` to reference question term in custom prompts)
 
 #### `Terms.get_match_question()`
 Parameters:
 * `n_terms = 5`: how many terms have to be matched
-* `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
+* `prompt = "{term}"`: question prompt (use `"{term}"` to reference question term in custom prompts)
 
 Returns a [`MatchQuestion`](#matchquestion) object with a random matching-format question generated from `terms`.
 
@@ -173,7 +173,7 @@ Parameters:
 * `types = ["mcq", "frq", "tf"]`: list that can contain `"mcq"`, `"frq"`, `"tf"`, or `"match"`; types of questions that appear on the quiz
 * `n_options = 4`: (if MCQs are involved) number of options per MCQ question
 * `n_terms = 5`: (if matching questions are involved) number of terms to match per matching question
-* `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
+* `prompt = "{term}"`: question prompt (use `"{term}"` to reference question term in custom prompts)
 * `prompts = {}`: prompt map to define specific prompts for specific questions
 
 Returns a `Question` object of a random-format question generated from `terms`.
@@ -188,7 +188,7 @@ Parameters:
 * `answer_with = "def"`: can be `"term"`, `"def"`, or `"both"`; how the question should be answered (see below)
 * `n_options = 4`: (if MCQs are involved) number of options per MCQ question
 * `n_terms = 5`: (if matching questions are involved) number of terms to match per matching question
-* `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
+* `prompt = "{term}"`: question prompt (use `"{term}"` to reference question term in custom prompts)
 * `prompts = {}`: prompt map to define specific prompts for specific questions
 
 `answer_with` describes how the user should answer the question, where `"term"` means a question should be answered by giving the term, `"def"` implies that the question should be answered by providing the definition, and `"both"` means that there is a 50/50 chance of the question needing a term or a definition as input.
@@ -241,7 +241,7 @@ Parameters:
 * `_type`: question type
 * `term`: question term
 * `answer`: question answer
-* `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
+* `prompt = "{term}"`: question prompt (use `"{term}"` to reference question term in custom prompts)
 * `**kwargs`: other question data (e.g. `options`, `definition`, etc.)
 
 #### `Question.term`
@@ -276,7 +276,7 @@ Parameters:
 * `term`: question term
 * `options`: question options
 * `answer`: question answer
-* `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
+* `prompt = "{term}"`: question prompt (use `"{term}"` to reference question term in custom prompts)
 
 #### `MCQQuestion.options`
 List of potential answer choices.
@@ -308,7 +308,7 @@ Representation of an FRQ-format question. Has the same attributes as [`Question`
 Parameters:
 * `term`: question term
 * `answer`: question answer
-* `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
+* `prompt = "{term}"`: question prompt (use `"{term}"` to reference question term in custom prompts)
 
 #### `FRQQuestion.to_dict()`
 The dictionary representation returned by the `to_dict` method of a `FRQQuestion` object looks like this:
@@ -331,7 +331,7 @@ Parameters:
 * `term`: question term
 * `definition`: question definition (what the user has to determine is True or False)
 * `answer`: question answer
-* `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
+* `prompt = "{term}"`: question prompt (use `"{term}"` to reference question term in custom prompts)
 
 #### `TrueFalseQuestion.definition`
 What the user has to determine is True or False.
@@ -359,7 +359,7 @@ Parameters:
 * `term`: question term
 * `definitions`: question definitions (what the user has to match with the terms)
 * `answer`: question answer
-* `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
+* `prompt = "{term}"`: question prompt (use `"{term}"` to reference question term in custom prompts)
 
 #### `MatchQuestion.definitions`
 What the user has to match with the corresponding terms.

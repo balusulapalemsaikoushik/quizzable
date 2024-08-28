@@ -35,7 +35,7 @@ class Question:
     * `_type`: question type
     * `term`: question term
     * `answer`: question answer
-    * `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
+    * `prompt = "{term}"`: question prompt (use `"{term}"` to reference question term in custom prompts)
     * `**kwargs`: other question data (e.g. `options`, `definition`, etc.)
     """
 
@@ -93,7 +93,7 @@ class MCQQuestion(Question):
     * `term`: question term
     * `options`: question options
     * `answer`: question answer
-    * `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
+    * `prompt = "{term}"`: question prompt (use `"{term}"` to reference question term in custom prompts)
     The dictionary representation returned by the `to_dict` method of an
     `MCQQuestion` object looks like this:
     ```py
@@ -126,7 +126,7 @@ class FRQQuestion(Question):
     ## Parameters
     * `term`: question term
     * `answer`: question answer
-    * `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
+    * `prompt = "{term}"`: question prompt (use `"{term}"` to reference question term in custom prompts)
     The dictionary representation returned by the `to_dict` method of an
     `FRQQuestion` object looks like this:
     ```py
@@ -152,7 +152,7 @@ class TrueFalseQuestion(Question):
     * `term`: question term
     * `definition`: question definition (what the user has to determine is True or False)
     * `answer`: question answer
-    * `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
+    * `prompt = "{term}"`: question prompt (use `"{term}"` to reference question term in custom prompts)
     The dictionary representation returned by the `to_dict` method of a
     `TrueFalseQuestion` object looks like this:
     ```py
@@ -182,7 +182,7 @@ class MatchQuestion(Question):
     * `term`: question term
     * `definitions`: question definitions (what the user has to match with the terms)
     * `answer`: question answer
-    * `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
+    * `prompt = "{term}"`: question prompt (use `"{term}"` to reference question term in custom prompts)
     The dictionary representation returned by the `to_dict` method of a
     `MatchQuestion` object looks like this:
     ```py
@@ -370,7 +370,7 @@ class Terms:
         """Returns an `FRQQuestion` object with a random FRQ-format question generated from `terms`.
 
         ## Parameters
-        * `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
+        * `prompt = "{term}"`: question prompt (use `"{term}"` to reference question term in custom prompts)
         """
         term = _get_random_terms(self._data)
         return FRQQuestion(term=term[0], answer=self[term[0]], prompt=prompt)
@@ -380,7 +380,7 @@ class Terms:
 
         ## Parameters
         * `n_options = 4`: number of options per question.
-        * `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
+        * `prompt = "{term}"`: question prompt (use `"{term}"` to reference question term in custom prompts)
         """
         if (not n_options) or (n_options > len(self)):
             raise _exceptions.InvalidOptionsError(n_options)
@@ -396,7 +396,7 @@ class Terms:
         """Returns a `TrueFalseQuestion` object with a random True-or-false format question generated from `terms`.
 
         ## Parameters
-        * `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
+        * `prompt = "{term}"`: question prompt (use `"{term}"` to reference question term in custom prompts)
         """
         term = _get_random_terms(self._data, 2)
         definition, answer = self[term[0]], True
@@ -411,7 +411,7 @@ class Terms:
 
         ## Parameters
         * `n_terms = 5`: how many terms have to be matched.
-        * `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
+        * `prompt = "{term}"`: question prompt (use `"{term}"` to reference question term in custom prompts)
         """
         if (not n_terms) or (n_terms > len(self)):
             raise _exceptions.InvalidTermsError(n_terms)
@@ -441,7 +441,7 @@ class Terms:
         types of questions that appear on the quiz.
         * `n_options = 4`: (if MCQs are involved) number of options per MCQ question.
         * `n_terms = 5`: (if matching questions are involved) number of terms to match per matching question.
-        * `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
+        * `prompt = "{term}"`: question prompt (use `"{term}"` to reference question term in custom prompts)
         * `prompts = {}`: prompt map to define specific prompts for specific questions
         """
         quiz_types = {
@@ -478,7 +478,7 @@ class Terms:
         * `answer_with = "def"`: can be `"term"`, `"def"`, or `"both"`; how the question should be answered.
         * `n_options = 4`: (if MCQs are involved) number of options per MCQ question.
         * `n_terms = 5`: (if matching questions are involved) number of terms to match per matching question.
-        * `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
+        * `prompt = "{term}"`: question prompt (use `"{term}"` to reference question term in custom prompts)
         * `prompts = {}`: prompt map to define specific prompts for specific questions
         """
         if (not length) or (length > len(self)):
