@@ -22,6 +22,9 @@
         * [`Quiz.from_data()`](#quizfrom_data)
         * [`Quiz.to_data()`](#quizto_data)
     * [`Question`](#question)
+        * [`Question.term`](#questionterm)
+        * [`Question.answer`](#questionanswer)
+        * [`Question.term`](#questionprompt)
         * [`Question.from_dict()`](#questionfrom_dict)
         * [`Question.check_answer()`](#questioncheck_answer)
         * [`Question.to_dict()`](#questionto_dict)
@@ -51,7 +54,7 @@ To get started, install the `quizzable` package through `pip` on a supported ver
 ```console
 $ python -m pip install quizzable
 ```
-Next, import the `Terms` class from the `quizzable` module:
+Next, import the [`Terms`](#terms) class from the `quizzable` module:
 ```py
 from quizzable import Terms
 ```
@@ -75,13 +78,16 @@ import json
 with open("vocabulary.json") as terms_file:
     terms = Terms(json.loads(terms_file.read()))
 ```
-Aftewards, you can choose to generate random types of questions using the `get_random_question` method:
+Aftewards, you can choose to generate random types of questions using the [`get_random_question`](#termsget_random_question) method:
 ```py
 question = terms.get_random_question()
 ```
-generate an entire quiz of questions using the `get_quiz` method:
+generate an entire quiz of questions using the [`get_quiz`](#termsget_quiz) method:
 ```py
-quiz = terms.get_quiz(types=["mcq", "match", "tf"])
+quiz = terms.get_quiz(
+    types=["mcq", "match", "tf"],
+    prompt="What is the translation of {term}?",
+)  # customize question types and prompt
 ```
 Or create different types of questions manually like so:
 ```py
@@ -92,13 +98,13 @@ matching = terms.get_frq_question()  # matching
 ```
 A question has different properties, depending on its type:
 ```py
-print(f"What is the translation of {mcq.term}?")
+print(mcq.prompt)
 for option in mcq.options:
     print(option)
 print()
 answer = input("Answer: ")
 ```
-To score a question, simply use its `check_answer` method:
+To score a question, simply use its [`check_answer`](#questioncheck_answer) method:
 ```py
 correct, actual = mcq.check_answer(answer)
 if correct:
@@ -139,18 +145,26 @@ Returns the dictionary `terms` modified based on the value for `answer_with`. Ma
 #### `Terms.get_frq_question()`
 Returns an [`FRQQuestion`](#frqquestion) object with a random FRQ-format question generated from `terms`.
 
+Parameters:
+* `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
+
 #### `Terms.get_mcq_question()`
 Parameters:
 * `n_options = 4`: number of options per question.
+* `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
 
 Returns an [`MCQQuestion`](#mcqquestion) object with a random MCQ-format question generated from `terms`.
 
 #### `Terms.get_true_false_question()`
 Returns a [`TrueFalseQuestion`](#truefalsequestion) object with a random True-or-false format question generated from `terms`.
 
+Parameters:
+* `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
+
 #### `Terms.get_match_question()`
 Parameters:
 * `n_terms = 5`: how many terms have to be matched
+* `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
 
 Returns a [`MatchQuestion`](#matchquestion) object with a random matching-format question generated from `terms`.
 
@@ -159,6 +173,8 @@ Parameters:
 * `types = ["mcq", "frq", "tf"]`: list that can contain `"mcq"`, `"frq"`, `"tf"`, or `"match"`; types of questions that appear on the quiz
 * `n_options = 4`: (if MCQs are involved) number of options per MCQ question
 * `n_terms = 5`: (if matching questions are involved) number of terms to match per matching question
+* `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
+* `prompts = {}`: prompt map to define specific prompts for specific questions
 
 Returns a `Question` object of a random-format question generated from `terms`.
 
@@ -172,13 +188,15 @@ Parameters:
 * `answer_with = "def"`: can be `"term"`, `"def"`, or `"both"`; how the question should be answered (see below)
 * `n_options = 4`: (if MCQs are involved) number of options per MCQ question
 * `n_terms = 5`: (if matching questions are involved) number of terms to match per matching question
+* `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
+* `prompts = {}`: prompt map to define specific prompts for specific questions
 
 `answer_with` describes how the user should answer the question, where `"term"` means a question should be answered by giving the term, `"def"` implies that the question should be answered by providing the definition, and `"both"` means that there is a 50/50 chance of the question needing a term or a definition as input.
 
 ### `Quiz`
 Arbitrary quiz object.
 #### `Quiz.questions`
-list of questions within the quiz, represented by a list of arbitrary `Question` objects.
+List of questions within the quiz, represented by a list of arbitrary `Question` objects.
 
 #### `Quiz.from_data()`
 Reconstructs a `Quiz` object from a listlike representation. See [`Quiz.to_data()`](#quizto_data) for more information on formatting.
@@ -191,7 +209,8 @@ Returns a listlike representation of the quiz, with each `Question` object being
         "_type": "tf",
         "term": "la iglesia",
         "definition": "shop",
-        "answer": "church"
+        "answer": "church",
+        "prompt": "la iglesia"
     },
     {
         "_type": "mcq",
@@ -201,12 +220,14 @@ Returns a listlike representation of the quiz, with each `Question` object being
             "park": False,
             "downtown": False,
             "museum": False,
-        }
+        },
+        "prompt": "la playa"
     },
     {
         "_type": "frq",
         "term": "park",
-        "answer": "el parque"
+        "answer": "el parque",
+        "prompt": "park"
     }
 ]
 ```
@@ -218,15 +239,19 @@ Generic question object used for reconstruction of a question from JSON data.
 
 Parameters:
 * `_type`: question type
-* `term`: question term (prompt)
+* `term`: question term
 * `answer`: question answer
+* `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
 * `**kwargs`: other question data (e.g. `options`, `definition`, etc.)
 
 #### `Question.term`
-Question that the user is prompted with.
+Term that the question is based on.
 
 #### `Question.answer`
 Correct answer to the prompt `term`.
+
+#### `Question.prompt`
+Prompt displayed to the user.
 
 #### `Question.from_dict()`
 Returns a reconstructed `Question` object made from `data`. Please see [`MCQQuestion.to_dict()`](#mcqquestionto_dict), [`FRQQuestion.to_dict()`](#frqquestionto_dict), [`TrueFalseQuestion.to_dict()`](#truefalsequestionto_dict), and [`MatchQuestion.to_dict()`](#matchquestionto_dict) for more information on formatting.
@@ -248,9 +273,10 @@ Returns a dictionary representation of the question. Each question has a `_type`
 Representation of an MCQ-format question. Has the same attributes as [`Question`](#question) objects, with some additional properties.
 
 Parameters:
-* `term`: question term (prompt)
+* `term`: question term
 * `options`: question options
 * `answer`: question answer
+* `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
 
 #### `MCQQuestion.options`
 List of potential answer choices.
@@ -280,8 +306,9 @@ Here's a brief overview:
 Representation of an FRQ-format question. Has the same attributes as [`Question`](#question) objects, with some additional properties.
 
 Parameters:
-* `term`: question term (prompt)
+* `term`: question term
 * `answer`: question answer
+* `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
 
 #### `FRQQuestion.to_dict()`
 The dictionary representation returned by the `to_dict` method of a `FRQQuestion` object looks like this:
@@ -301,9 +328,10 @@ Here's a brief overview:
 Representation of an True-or-false format question. Has the same attributes as [`Question`](#question) objects, with the some additional properties.
 
 Parameters:
-* `term`: question term (prompt)
+* `term`: question term
 * `definition`: question definition (what the user has to determine is True or False)
 * `answer`: question answer
+* `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
 
 #### `TrueFalseQuestion.definition`
 What the user has to determine is True or False.
@@ -328,9 +356,10 @@ Here's a brief overview:
 Representation of an MCQ-format question. Has the same attributes as [`Question`](#question) objects, with the some additional properties.
 
 Parameters:
-* `term`: question term (prompt)
+* `term`: question term
 * `definitions`: question definitions (what the user has to match with the terms)
 * `answer`: question answer
+* `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
 
 #### `MatchQuestion.definitions`
 What the user has to match with the corresponding terms.

@@ -33,16 +33,34 @@ class Question:
 
     ## Parameters
     * `_type`: question type
-    * `term`: question term (prompt)
+    * `term`: question term
     * `answer`: question answer
+    * `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
     * `**kwargs`: other question data (e.g. `options`, `definition`, etc.)
     """
 
-    def __init__(self, _type: str, term: str, answer: _Union[str, bool], **kwargs):
+    def __init__(
+        self,
+        _type: str,
+        term: _Union[str, list],
+        answer: _Union[str, bool],
+        prompt="{term}",
+        **kwargs
+    ):
         self._type = _type
         self.term = term
         self.answer = answer
-        self._data = {"_type": _type, "term": term, "answer": answer, **kwargs}
+        prompt_term = term
+        if type(term) is list:
+            prompt_term = ", ".join(term)
+        self.prompt = prompt.format(term=prompt_term)
+        self._data = {
+            "_type": _type,
+            "term": term,
+            "answer": answer,
+            "prompt": self.prompt,
+            **kwargs,
+        }
 
     @classmethod
     def from_dict(cls, data: dict):
@@ -72,9 +90,10 @@ class Question:
 class MCQQuestion(Question):
     """Representation of an MCQ-format question.
     ## Parameters
-    * `term`: question term (prompt)
+    * `term`: question term
     * `options`: question options
     * `answer`: question answer
+    * `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
     The dictionary representation returned by the `to_dict` method of an
     `MCQQuestion` object looks like this:
     ```py
@@ -87,7 +106,8 @@ class MCQQuestion(Question):
             "option3": True,
             "option4": False,
         },
-        "answer": "answer"
+        "answer": "answer",
+        "prompt": "term"
     }
     ```
     Here's a brief overview:
@@ -96,23 +116,25 @@ class MCQQuestion(Question):
     * `answer` is correct choice out of `options`.
     """
 
-    def __init__(self, term: str, options: list[str], answer: str):
-        super().__init__("mcq", term, answer, options=options)
+    def __init__(self, term: str, options: list[str], answer: str, prompt="{term}"):
+        super().__init__("mcq", term, answer, prompt, options=options)
         self.options = options
 
 
 class FRQQuestion(Question):
     """Representation of an FRQ-format question.
     ## Parameters
-    * `term`: question term (prompt)
+    * `term`: question term
     * `answer`: question answer
+    * `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
     The dictionary representation returned by the `to_dict` method of an
     `FRQQuestion` object looks like this:
     ```py
     {
         "_type": "frq",
         "term": "term",
-        "answer": "answer"
+        "answer": "answer",
+        "prompt": "term"
     }
     ```
     Here's a brief overview:
@@ -120,16 +142,17 @@ class FRQQuestion(Question):
     * `answer` is the response that will be accepted as correct given the user's prompt.
     """
 
-    def __init__(self, term: str, answer: str):
-        super().__init__("frq", term, answer)
+    def __init__(self, term: str, answer: str, prompt="{term}"):
+        super().__init__("frq", term, answer, prompt)
 
 
 class TrueFalseQuestion(Question):
     """Representation of a True-or-false format question.
     ## Parameters
-    * `term`: question term (prompt)
+    * `term`: question term
     * `definition`: question definition (what the user has to determine is True or False)
     * `answer`: question answer
+    * `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
     The dictionary representation returned by the `to_dict` method of a
     `TrueFalseQuestion` object looks like this:
     ```py
@@ -137,7 +160,8 @@ class TrueFalseQuestion(Question):
         "_type": "tf",
         "term": "term",
         "definition": "definition",
-        "answer": "answer"
+        "answer": "answer",
+        "prompt": "term"
     }
     ```
     Here's a brief overview:
@@ -147,17 +171,18 @@ class TrueFalseQuestion(Question):
     * `answer` is the actual definition that matches with the given `prompt`, or term.
     """
 
-    def __init__(self, term: str, definition: str, answer: bool):
-        super().__init__("tf", term, answer, definition=definition)
+    def __init__(self, term: str, definition: str, answer: bool, prompt="{term}"):
+        super().__init__("tf", term, answer, prompt, definition=definition)
         self.definition = definition
 
 
 class MatchQuestion(Question):
     """Representation of a matching format question.
     ## Parameters
-    * `term`: question term (prompt)
+    * `term`: question term
     * `definitions`: question definitions (what the user has to match with the terms)
     * `answer`: question answer
+    * `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
     The dictionary representation returned by the `to_dict` method of a
     `MatchQuestion` object looks like this:
     ```py
@@ -180,7 +205,8 @@ class MatchQuestion(Question):
             "term2": "definition2",
             "term3": "definition3",
             "term4": "definition4"
-        }
+        },
+        "prompt": "term"
     }
     ```
     Here's a brief overview:
@@ -190,8 +216,10 @@ class MatchQuestion(Question):
     * `answer` maps the terms `term` to their actual definitions `definitions`.
     """
 
-    def __init__(self, term: str, definitions: list[str], answer: dict[str, str]):
-        super().__init__("match", term, answer, definitions=definitions)
+    def __init__(
+        self, term: str, definitions: list[str], answer: dict[str, str], prompt="{term}"
+    ):
+        super().__init__("match", term, answer, prompt, definitions=definitions)
         self.definitions = definitions
 
 
@@ -224,7 +252,8 @@ class Quiz:
                 "_type": "tf",
                 "term": "la iglesia",
                 "definition": "shop",
-                "answer": "church"
+                "answer": "church",
+                "prompt": "la iglesia"
             },
             {
                 "_type": "mcq",
@@ -234,12 +263,14 @@ class Quiz:
                     "park": False,
                     "downtown": False,
                     "museum": False,
-                }
+                },
+                "prompt": "la playa"
             },
             {
                 "_type": "frq",
                 "term": "park",
-                "answer": "el parque"
+                "answer": "el parque",
+                "prompt": "park"
             }
         ]
         ```
@@ -335,16 +366,21 @@ class Terms:
             terms_copy[new_term] = new_def
         return Terms(terms_copy)
 
-    def get_frq_question(self, **kwargs):
-        """Returns an `FRQQuestion` object with a random FRQ-format question generated from `terms`."""
-        term = _get_random_terms(self._data)
-        return FRQQuestion(term=term, answer=self[term[0]])
+    def get_frq_question(self, prompt="{term}", **kwargs):
+        """Returns an `FRQQuestion` object with a random FRQ-format question generated from `terms`.
 
-    def get_mcq_question(self, n_options=4, **kwargs):
+        ## Parameters
+        * `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
+        """
+        term = _get_random_terms(self._data)
+        return FRQQuestion(term=term[0], answer=self[term[0]], prompt=prompt)
+
+    def get_mcq_question(self, n_options=4, prompt="{term}", **kwargs):
         """Returns an `MCQQuestion` object with a random MCQ-format question generated from `terms`.
 
         ## Parameters
         * `n_options = 4`: number of options per question.
+        * `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
         """
         if (not n_options) or (n_options > len(self)):
             raise _exceptions.InvalidOptionsError(n_options)
@@ -352,21 +388,30 @@ class Terms:
         options = _get_random_terms(self._data, n_options)
         term = _random.choice(options)
         answer_choices = [self[option] for option in options]
-        return MCQQuestion(term=[term], options=answer_choices, answer=self[term])
+        return MCQQuestion(
+            term=term, options=answer_choices, answer=self[term], prompt=prompt
+        )
 
-    def get_true_false_question(self, **kwargs):
-        """Returns a `TrueFalseQuestion` object with a random True-or-false format question generated from `terms`."""
+    def get_true_false_question(self, prompt="{term}", **kwargs):
+        """Returns a `TrueFalseQuestion` object with a random True-or-false format question generated from `terms`.
+
+        ## Parameters
+        * `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
+        """
         term = _get_random_terms(self._data, 2)
         definition, answer = self[term[0]], True
         if _random.random() < 0.5:
             definition, answer = self[term[1]], False
-        return TrueFalseQuestion(term=term, definition=definition, answer=answer)
+        return TrueFalseQuestion(
+            term=term[0], definition=definition, answer=answer, prompt=prompt
+        )
 
-    def get_match_question(self, n_terms=5, **kwargs):
+    def get_match_question(self, n_terms=5, prompt="{term}", **kwargs):
         """Returns a `MatchQuestion` object with a matching format question generated from `terms`.
 
         ## Parameters
         * `n_terms = 5`: how many terms have to be matched.
+        * `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
         """
         if (not n_terms) or (n_terms > len(self)):
             raise _exceptions.InvalidTermsError(n_terms)
@@ -377,9 +422,18 @@ class Terms:
             definitions.append(self[t])
         answer = dict(zip(term, definitions))
         _random.shuffle(definitions)
-        return MatchQuestion(term=term, definitions=definitions, answer=answer)
+        return MatchQuestion(
+            term=term, definitions=definitions, answer=answer, prompt=prompt
+        )
 
-    def get_random_question(self, types=["mcq", "frq", "tf"], n_options=4, n_terms=5):
+    def get_random_question(
+        self,
+        types=["mcq", "frq", "tf"],
+        n_options=4,
+        n_terms=5,
+        prompt="{term}",
+        prompts: dict = {},
+    ):
         """Returns a `Question` object of a random-format question generated from `terms`.
 
         ## Parameters
@@ -387,6 +441,8 @@ class Terms:
         types of questions that appear on the quiz.
         * `n_options = 4`: (if MCQs are involved) number of options per MCQ question.
         * `n_terms = 5`: (if matching questions are involved) number of terms to match per matching question.
+        * `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
+        * `prompts = {}`: prompt map to define specific prompts for specific questions
         """
         quiz_types = {
             "mcq": self.get_mcq_question,
@@ -395,10 +451,13 @@ class Terms:
             "match": self.get_match_question,
         }
         try:
-            get_question = quiz_types[_random.choice(types)]
+            question_type = _random.choice(types)
+            if question_type in prompts:
+                prompt = prompts[question_type]
+            get_question = quiz_types[question_type]
         except KeyError as e:
             raise _exceptions.InvalidQuestionError(e.args[0])
-        return get_question(n_options=n_options, n_terms=n_terms)
+        return get_question(prompt=prompt, n_options=n_options, n_terms=n_terms)
 
     def get_quiz(
         self,
@@ -407,6 +466,8 @@ class Terms:
         answer_with="def",
         n_options=4,
         n_terms=5,
+        prompt="{term}",
+        prompts: dict = {},
     ):
         """Returns a `Quiz` object with random questions based on the parameters below.
 
@@ -417,6 +478,8 @@ class Terms:
         * `answer_with = "def"`: can be `"term"`, `"def"`, or `"both"`; how the question should be answered.
         * `n_options = 4`: (if MCQs are involved) number of options per MCQ question.
         * `n_terms = 5`: (if matching questions are involved) number of terms to match per matching question.
+        * `prompt = "{term}"`: question prompt (use "{term}" to reference question term in custom prompts)
+        * `prompts = {}`: prompt map to define specific prompts for specific questions
         """
         if (not length) or (length > len(self)):
             raise _exceptions.InvalidLengthError(length)
@@ -425,11 +488,18 @@ class Terms:
         terms_copy = self.get_terms(answer_with)
         for i in range(length):
             question = terms_copy.get_random_question(
-                types, n_options=n_options, n_terms=n_terms
+                types,
+                n_options=n_options,
+                n_terms=n_terms,
+                prompt=prompt,
+                prompts=prompts,
             )
             questions.append(question)
-            for t in question.term:
-                del terms_copy[t]
+            if type(question.term) is list:
+                for t in question.term:
+                    del terms_copy[t]
+            else:
+                del terms_copy[question.term]
             if (len(terms_copy) < n_terms) or (len(terms_copy) < n_options):
                 terms_copy = self.get_terms(answer_with)
         return Quiz(questions)

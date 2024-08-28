@@ -41,7 +41,7 @@ class TestFunctions:
         """Test that `get_frq_question` returns an `FRQQuestion` with a term and its answer."""
 
         frq = terms.get_frq_question()
-        assert frq.answer == terms[frq.term[0]]
+        assert frq.answer == terms[frq.term]
 
     @pytest.mark.parametrize("n_options", [0, 3, 13])
     def test_get_mcq_question(self, terms, n_options):
@@ -49,7 +49,7 @@ class TestFunctions:
 
         try:
             mcq = terms.get_mcq_question(n_options)
-            assert mcq.answer == terms[mcq.term[0]]
+            assert mcq.answer == terms[mcq.term]
             assert len(mcq.options) == n_options
         except exceptions.InvalidOptionsError:
             assert True
@@ -58,7 +58,7 @@ class TestFunctions:
         """Test that `get_true_false_question` returns a `TrueFalseQuestion` with a term, a definition, and answer."""
 
         tf = terms.get_true_false_question()
-        assert tf.answer == (terms[tf.term[0]] == tf.definition)
+        assert tf.answer == (terms[tf.term] == tf.definition)
 
     @pytest.mark.parametrize("n_terms", [0, 6, 13])
     def test_get_match_question(self, n_terms, terms):

@@ -22,6 +22,7 @@ class TestQuiz:
                 "_type": "frq",
                 "term": "A type of language that forms due to extensive contact between different groups of people",
                 "answer": "Pidgin",
+                "prompt": "A type of language that forms due to extensive contact between different groups of people",
             },
             {
                 "_type": "mcq",
@@ -32,12 +33,14 @@ class TestQuiz:
                     "Acculturation",
                 ],
                 "answer": "Syncretism",
+                "prompt": "The blending of multiple aspects of culture to form a unique identity.",
             },
             {
                 "_type": "tf",
                 "term": "Anything that brings a people together.",
                 "definition": "Centrifugal force",
                 "answer": False,
+                "prompt": "Anything that brings a people together.",
             },
         ]
 
@@ -97,6 +100,7 @@ class TestQuestion:
                 "Nation state",
             ],
             "answer": "Federal state",
+            "prompt": "A state divided into several regions with some degree of autonomy under one government.",
         }
 
     @pytest.fixture
